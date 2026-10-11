@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd -- "$(dirname -- "$0")"
+case "${1:-help}" in
+  up) docker compose up -d --build --wait --wait-timeout 180 ;;
+  stop) docker compose stop ;;
+  down) docker compose down ;;
+  shell) docker compose exec php bash ;;
+  check) docker compose exec -T php php checks/connections.php ;;
+  composer) shift; docker compose exec -T php composer "$@" ;;
+  php) shift; docker compose exec -T php php "$@" ;;
+  debug) shift; docker compose exec -e XDEBUG_TRIGGER=1 php php "$@" ;;
+  status) docker compose ps ;;
+  logs) docker compose logs --tail=100 ;;
+  *) echo 'Usage: bash lab {up|stop|down|shell|check|composer ...|php ...|debug script.php|status|logs}' ;;
+esac
