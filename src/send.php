@@ -15,18 +15,6 @@ $connection = new AMQPStreamConnection(
 );
 $channel = $connection->channel();
 
-$channel->queue_declare(
-	'hello',
-	false,
-	true,
-	false,
-	false,
-	false,
-	new AMQPTable([
-		'x-queue-type' => 'quorum'
-	]),
-);
-
 $msg = new AMQPMessage('Hello World!');
 $channel->basic_publish($msg, '', 'hello');
 

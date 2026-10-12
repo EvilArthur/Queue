@@ -32,7 +32,15 @@ $callback = function (AMQPMessage $msg) {
 	echo ' [x] Received ', $msg->getBody(), "\n";
 };
 
-$channel->basic_consume('hello', '', false, true, false, false, $callback);
+$channel->basic_consume(
+	'hello',
+	'',
+	false,
+	true,
+	false,
+	false,
+	$callback
+);
 
 try
 {
