@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -23,19 +23,24 @@ $channel->queue_declare(
 	false, // Удаление очереди после отключения последнего потребителя
 	false, // Дождаться ответа на объявление очереди
 	new AMQPTable([
-		'x-queue-type' => 'quorum',
+		'x-queue-type' => 'quorum'
 	])
 );
 echo " [*] Waiting for messages. To exit press CTRL+C\n";
 
 $callback = function (AMQPMessage $msg) {
 	echo ' [x] Received ', $msg->getBody(), "\n";
-	sleep(substr_count($msg->getBody(), '.'));
-	echo " [x] Done\n";
-	$msg->ack();
 };
 
-$channel->basic_consume('hello', '', false, false, false, false, $callback);
+$channel->basic_consume(
+	'hello',
+	'',
+	false,
+	true,
+	false,
+	false,
+	$callback
+);
 
 try
 {
